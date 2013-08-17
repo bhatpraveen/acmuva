@@ -1,25 +1,33 @@
 /* UVa 10394 Twin Primes */
 #include <cstdio>
-#include <math.h>
 using namespace std;
 
 const int HIGHEST = 20000000;
 bool primes[HIGHEST];
+int twins[100001];
+int si = 0;
 
 inline void SieveOEratosthenes(bool primes[], const int &largest) {
     int square;
-    int root = (int) sqrt(largest);
 
     for (int i = 2; i < largest; ++i) primes[i] = true;
-
+    primes[0] = false;
+    primes[1] = false;
     //Sieve of Eratosthenes
-    for (int i = 2; i <= root; ++i) {
+    for (int i = 2; i <= 4472; ++i) {
+
         if(primes[i]) {
+            if (primes[i-2]) {
+                //printf("both %d and %d are primes\n", i, i-2);
+                si++;
+                twins[si] = i - 2;
+            }
             square = i * i;
-            int m = 1;
-            for(int j = square; j <= largest; j = square + (m * i)) {
+            //int m = 1;
+            //for(int j = square; j <= largest; j = square + (m * i)) {
+            for(int j = square; j <= largest; j += i) {
                 primes[j] = false;
-                ++m;
+                //++m;
             }
         }
     }
@@ -27,13 +35,11 @@ inline void SieveOEratosthenes(bool primes[], const int &largest) {
 
 int main() {
     int s;
-    int twins[100001];
     //Generate Primes
     SieveOEratosthenes(primes, HIGHEST);
 
     //Mark twins
-    int si = 0;
-    for(int i = 2; si <= 100000 /* && i < HIGHEST */; ++i) {
+    for(int i = 4472; si <= 100000; ++i) {
         if (primes[i] && primes[i+2]) {
             si++;
             twins[si] = i;
