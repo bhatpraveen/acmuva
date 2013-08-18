@@ -19,7 +19,7 @@ int main() {
 
         rem = 0;
         for(int i = 0; m[i] != '\n'; ++i)
-            rem = ((rem << 8) + m[i]) % G; //rem = ((rem * 256) + m[i]) % G;
+            rem = ((rem << 8) + m[i]) % G; //rem = ((rem * 256) + m[i]) % G; (| instead of + took 0.003s more)
 
         crc = (G - (rem << 16) % G) % G; //crc = (G - (rem *256 *256) % G) % G;
 
