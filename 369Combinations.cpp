@@ -5,7 +5,39 @@
 //#include <iostream>
 using namespace std;
 
+#define LL unsigned long long int
 static const int MAX = 10240; //who knows how many leading spaces will be there
+static LL pt[101][101] = {};
+
+static inline void PascalsTriangle(int n) {
+    int rows = n; //no of rows to print
+    int j1;
+
+    pt[0][0] = 1;
+    pt[1][0] = 1;
+    pt[1][1] = 1;
+
+    //cout << 1 << endl; cout << 1 << " " << 1 << endl;
+    for(int i = 2; i <= rows; ++i) {
+        //cout << i << ":";
+        pt[i][0] = 1;
+        //cout << 1 << " ";
+        int j = 1;
+        for(; j <= i/2; ++j) {
+            pt[i][j] = pt[i-1][j-1] + pt[i-1][j];
+            //cout << "(" << i << ":" << j << ")";
+            //cout << pt[n1][j] << " ";
+        }
+        j1 = i&1? i/2: i/2 - 1;
+        for(; j1 > 0; j++) {
+            pt[i][j] = pt[i][j1--];
+            //cout << "(" << i << ":" << j << ")";
+            //cout << pt[n1][j] << " ";
+        }
+        pt[i][i] = 1;
+        //cout << 1 << endl;
+    }
+}
 
 inline long long int GetNumber(char s[], int *index) {
     long long int x;
@@ -36,12 +68,13 @@ inline long long int GetNumber(char s[], int *index) {
 }
 
 int main() {
-    long long int n, m, div, num = 0, den = 1;
+    int n, m;
     char s[1024];
     int len;
 
-    vector<int> numv;
-    vector<int> denv;
+    //Generate Pascal's triangle
+    PascalsTriangle(100);
+
 
     while(fgets(s, MAX, stdin)) {
         len = strlen(s);
@@ -51,45 +84,7 @@ int main() {
 
         if(n == 0) break;
 
-        for(int i = m + 1; i <= n; ++i) numv.push_back(i);
-        for(int i = 2; i <= n-m; ++i) denv.push_back(i);
-
-        //cout << "num: "; for(int i = 0; i < numv.size(); ++i) cout << numv[i] << " x "; cout << endl;
-        //cout << "den: "; for(int j = 0; j < denv.size(); ++j) cout << denv[j] << " x "; cout << endl;
-
-        int ns = numv.size();
-        for(int i = 0; i < ns; ++i) {
-            int ds = denv.size();
-            for(int j = 0; j < ds && denv[j] <= numv[i]; ++j) {
-                if(numv[i] % denv[j] == 0) {
-                    //printf("%d is divisible by %d, replacing %d by %d and deleting %d\n", numv[i], denv[j], numv[i], numv[i]/ denv[j], denv[j]); //DEBUG
-                    numv[i] = numv[i] / denv[j];
-                    /* TBD crashing
-                    if(numv[i] == 1) {
-                        numv.erase(numv.begin() + i);
-                        ns = numv.size();
-                    }
-                    */
-                    //denv[j] = 1;
-                    denv.erase(denv.begin() + j);
-                    ds = denv.size();
-                }
-            }
-        }
-
-        //cout << "num: "; for(int i = 0; i < numv.size(); ++i) cout << numv[i] << " x "; cout << endl;
-        //cout << "den: "; for(int j = 0; j < denv.size(); ++j) cout << denv[j] << " x "; cout << endl<< endl<< endl;
-
-        num = den = 1;
-        for(int i = 0; i < numv.size(); ++i) num *= numv[i];
-        for(int j = 0; j < denv.size(); ++j) den *= denv[j];
-        div = 0;
-        //cout << num << " " << den << endl;
-        if(num > 0 && den > 0 && den <= num) div = num/den;
-        printf("%lld things taken %lld at a time is %lld exactly.\n", n, m, div);
-
-        numv.clear();
-        denv.clear();
+        printf("%d things taken %d at a time is %lld exactly.\n", n, m, pt[n][m]);
     }
     return 0;
 }
